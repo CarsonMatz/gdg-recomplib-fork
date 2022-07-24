@@ -75,7 +75,7 @@ export type ButtonProps = {
     style ? : React.CSSProperties;
     animate ? : any;
     onClick: () => Promise<any>; //takes in-line function
-    variant?: string; 
+    variant: string; 
     text: string;
 };
 
@@ -142,7 +142,7 @@ export const Button : FC<ButtonProps>  = ({
             className={BUTTON_CLASSNAMES}
             onClick={handleClickAsync}
             style={{
-                ...{variantMap[variant]},
+                ...variantMap[variantMap.findIndex(variant)],
                 ...style,
                 ...!isHovered ? BUTTON_STYLE : {opacity: '0.8'}
                 }}>

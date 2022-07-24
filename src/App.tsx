@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import {Button} from './components';
 //import './CSS/specs.css';
-import { } from './components/navigation/Button';
+import { } from './components/navigation/panels/Button';
 
 function App() {
   return (
