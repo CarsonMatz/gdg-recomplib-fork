@@ -20,12 +20,6 @@ export const mkHandleMouseLeave = (setHovered : (isHovered : boolean)=>void) => 
 //global declaration of button states
 export type ButtonState = "default" | "loading" | "error" | "success" | "warning" | "helping" | "hinting";
 
-export const Variants = ["do", "get info", "get user info", "navigate", "find", "sort", "install", "comment", "get help"];
-export const VARIANT_STYLES = ["BUTTON_STYLE", "GETINFO_STYLE", "GETUSERINFO_STYLE", "NAVIGATE_STYLE", "FIND_STYLE", 
-    "SORT_STYLE", "INSTALL_STYLE", "COMMENT_STYLE", "GETHELP_STYLE"];
-export const variantMap = Variants.map((Variant) => VARIANT_STYLES);
-    
-
 //general css for button, can be altered or spoofed up
 export const BUTTON_STYLE : React.CSSProperties = {
     backgroundColor: '#33b863',
@@ -48,6 +42,19 @@ export const LOADING_STYLE : React.CSSProperties = {
     width: '20px',
     height: '20px',
     display: 'inline-block',
+};
+
+//map to connect variants with their respective CSS styles
+export const variantMap = {
+    "do": BUTTON_STYLE, 
+    "getInfo": "GETINFO_STYLE", 
+    "getUserInfo": "GETUSERINFO_STYLE",
+    "navigate": "NAVIGATE_STYLE",
+    "find": "FIND_STYLE",
+    "sort": "SORT_STYLE",
+    "install": "INSTALL_STYLE",
+    "comment": "COMMENT_STYLE",
+    "getHelp": "GETHELP_STYLE"
 };
 
 //function for drawing lines/shapes (such as check, x) with framer motion
@@ -75,7 +82,7 @@ export type ButtonProps = {
     style ? : React.CSSProperties;
     animate ? : any;
     onClick: () => Promise<any>; //takes in-line function
-    variant: string; 
+    variant?: string; 
     text: string;
 };
 
@@ -83,7 +90,7 @@ export const Button : FC<ButtonProps>  = ({
     style,
     animate,
     onClick,
-    variant = 'do',
+    variant = "do",
     text,
 }) =>{
 
@@ -142,7 +149,7 @@ export const Button : FC<ButtonProps>  = ({
             className={BUTTON_CLASSNAMES}
             onClick={handleClickAsync}
             style={{
-                ...variantMap[variantMap.findIndex(variant)],
+                ...variantMap[variant],
                 ...style,
                 ...!isHovered ? BUTTON_STYLE : {opacity: '0.8'}
                 }}>

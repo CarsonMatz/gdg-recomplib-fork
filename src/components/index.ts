@@ -1,1 +1,1 @@
-export {Button} from "./navigation/panels/Button";
+export {Button} from "./input/unary/Button";
