@@ -15,7 +15,7 @@ function App() {
       />
       <Button      //button that goes to gdg website when clicked
         onClick = {async () =>fetch("https://httpnonesence.org/nonesense")}
-        variant =  'do'
+        variant =  'getInfo'
         text = "Testing Button"
       />
     </div>

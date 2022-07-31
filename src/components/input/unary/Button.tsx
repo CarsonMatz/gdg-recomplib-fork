@@ -21,8 +21,96 @@ export const mkHandleMouseLeave = (setHovered : (isHovered : boolean)=>void) => 
 export type ButtonState = "default" | "loading" | "error" | "success" | "warning" | "helping" | "hinting";
 
 //general css for button, can be altered or spoofed up
-export const BUTTON_STYLE : React.CSSProperties = {
+export const DO_STYLE : React.CSSProperties = {
     backgroundColor: '#33b863',
+    opacity: '1',
+    border: '2px solid #636363',
+    fontFamily: 'sans-serif',
+    fontSize: '16px',
+    padding: '15px 15px',
+    margin: '5px 5px',
+    display: 'inline-block',
+    textAlign: 'center',   
+};
+export const GETINFO_STYLE : React.CSSProperties = {
+    backgroundColor: '#861a48',
+    opacity: '1',
+    border: '2px solid #636363',
+    fontFamily: 'sans-serif',
+    fontSize: '16px',
+    padding: '15px 15px',
+    margin: '5px 5px',
+    display: 'inline-block',
+    textAlign: 'center',   
+};
+export const GETUSERINFO_STYLE : React.CSSProperties = {
+    backgroundColor: '#3a8eca',
+    opacity: '1',
+    border: '2px solid #636363',
+    fontFamily: 'sans-serif',
+    fontSize: '16px',
+    padding: '15px 15px',
+    margin: '5px 5px',
+    display: 'inline-block',
+    textAlign: 'center',   
+};
+export const NAVIGATE_STYLE : React.CSSProperties = {
+    backgroundColor: '#7fbc4d',
+    opacity: '1',
+    border: '2px solid #636363',
+    fontFamily: 'sans-serif',
+    fontSize: '16px',
+    padding: '15px 15px',
+    margin: '5px 5px',
+    display: 'inline-block',
+    textAlign: 'center',   
+};
+export const SORT_STYLE : React.CSSProperties = {
+    backgroundColor: '#000000',
+    opacity: '1',
+    border: '2px solid #636363',
+    fontFamily: 'sans-serif',
+    fontSize: '16px',
+    padding: '15px 15px',
+    margin: '5px 5px',
+    display: 'inline-block',
+    textAlign: 'center',   
+};
+export const FIND_STYLE : React.CSSProperties = {
+    backgroundColor: '#4a4a4a',
+    opacity: '1',
+    border: '2px solid #636363',
+    fontFamily: 'sans-serif',
+    fontSize: '16px',
+    padding: '15px 15px',
+    margin: '5px 5px',
+    display: 'inline-block',
+    textAlign: 'center',   
+};
+export const INSTALL_STYLE : React.CSSProperties = {
+    backgroundColor: '#dc0e01',
+    opacity: '1',
+    border: '2px solid #636363',
+    fontFamily: 'sans-serif',
+    fontSize: '16px',
+    padding: '15px 15px',
+    margin: '5px 5px',
+    display: 'inline-block',
+    textAlign: 'center',   
+};
+export const COMMENT_STYLE : React.CSSProperties = {
+    backgroundColor: '#094068',
+    opacity: '1',
+    border: '2px solid #636363',
+    fontFamily: 'sans-serif',
+    fontSize: '16px',
+    padding: '15px 15px',
+    margin: '5px 5px',
+    display: 'inline-block',
+    textAlign: 'center',   
+};
+export const GETHELP_STYLE : React.CSSProperties = {
+    backgroundColor: '#e65f21',
     opacity: '1',
     border: '2px solid #636363',
     fontFamily: 'sans-serif',
@@ -44,17 +132,18 @@ export const LOADING_STYLE : React.CSSProperties = {
     display: 'inline-block',
 };
 
+type VariantMap = "do"|"getInfo"|"getUserInfo"|"navigate"|"find"|"sort"|"install"|"comment"|"getHelp";
 //map to connect variants with their respective CSS styles
 export const variantMap = {
-    "do": BUTTON_STYLE, 
-    "getInfo": "GETINFO_STYLE", 
-    "getUserInfo": "GETUSERINFO_STYLE",
-    "navigate": "NAVIGATE_STYLE",
-    "find": "FIND_STYLE",
-    "sort": "SORT_STYLE",
-    "install": "INSTALL_STYLE",
-    "comment": "COMMENT_STYLE",
-    "getHelp": "GETHELP_STYLE"
+    "do": DO_STYLE, 
+    "getInfo": GETINFO_STYLE, 
+    "getUserInfo": GETUSERINFO_STYLE,
+    "navigate": NAVIGATE_STYLE,
+    "find": FIND_STYLE,
+    "sort": SORT_STYLE,
+    "install": INSTALL_STYLE,
+    "comment": COMMENT_STYLE,
+    "getHelp": GETHELP_STYLE,
 };
 
 //function for drawing lines/shapes (such as check, x) with framer motion
@@ -82,7 +171,7 @@ export type ButtonProps = {
     style ? : React.CSSProperties;
     animate ? : any;
     onClick: () => Promise<any>; //takes in-line function
-    variant?: string; 
+    variant?: VariantMap; 
     text: string;
 };
 
@@ -93,6 +182,8 @@ export const Button : FC<ButtonProps>  = ({
     variant = "do",
     text,
 }) =>{
+    //get the correct block of css depending on the user variant input
+    //const css = variantMap[variant];
 
     const [buttonState, setButtonState] = useState<ButtonState>("default");
 /*     const [myTimeout, setMyTimeout] = useReducer<(state: NodeJS.Timeout|undefined, newState : NodeJS.Timeout|undefined)=>NodeJS.Timeout|undefined)>((oldTimeout: NodeJS.Timeout, timeout : NodeJS.Timeout)=>{
@@ -151,7 +242,7 @@ export const Button : FC<ButtonProps>  = ({
             style={{
                 ...variantMap[variant],
                 ...style,
-                ...!isHovered ? BUTTON_STYLE : {opacity: '0.8'}
+                ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
                 }}>
                 {text + " "}
                 <motion.button
@@ -179,9 +270,9 @@ export const Button : FC<ButtonProps>  = ({
             className={BUTTON_CLASSNAMES}
             onClick={handleClickAsync}
             style={{
-                ...BUTTON_STYLE,
+                ...variantMap[variant],
                 ...style,
-                ...!isHovered ? BUTTON_STYLE : {opacity: '0.8'}
+                ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
                 }}>
                 {text + " "}
                 <motion.svg
@@ -222,9 +313,9 @@ export const Button : FC<ButtonProps>  = ({
                 className={BUTTON_CLASSNAMES}
                 onClick={handleClickAsync}
                 style={{
-                    ...BUTTON_STYLE,
+                    ...variantMap[variant],
                     ...style,
-                    ...!isHovered ? BUTTON_STYLE : {opacity: '0.8'}
+                    ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
                     }}>
                     {text + " "}
                     <motion.svg
@@ -265,9 +356,9 @@ export const Button : FC<ButtonProps>  = ({
             className={BUTTON_CLASSNAMES}
             onClick={handleClickAsync}
             style={{
-                ...BUTTON_STYLE,
+                ...variantMap[variant],
                 ...style,
-                ...!isHovered ? BUTTON_STYLE : {opacity: '0.8'}
+                ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
                 }}>
                 {text + " "}
                 <AiOutlineWarning />
@@ -285,9 +376,9 @@ export const Button : FC<ButtonProps>  = ({
             className={BUTTON_CLASSNAMES}
             onClick={handleClickAsync}
             style={{
-                ...BUTTON_STYLE,
+                ...variantMap[variant],
                 ...style,
-                ...!isHovered ? BUTTON_STYLE : {opacity: '0.8'}
+                ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
                 }}>
                 {text + " "}
                 <motion.p
@@ -315,9 +406,9 @@ export const Button : FC<ButtonProps>  = ({
             className={BUTTON_CLASSNAMES}
             onClick={handleClickAsync}
             style={{
-                ...BUTTON_STYLE,
+                ...variantMap[variant],
                 ...style,
-                ...!isHovered ? BUTTON_STYLE : {opacity: '0.8'}
+                ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
                 }}>
                 {text + " "}
                 <motion.p
@@ -344,9 +435,9 @@ export const Button : FC<ButtonProps>  = ({
         className={BUTTON_CLASSNAMES}
         onClick={handleClickAsync}
         style={{
-            ...BUTTON_STYLE,
+            ...variantMap[variant],
             ...style,
-            ...!isHovered ? BUTTON_STYLE : {opacity: '0.8'}
+            ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
             }}>
             {text}
         </button>
