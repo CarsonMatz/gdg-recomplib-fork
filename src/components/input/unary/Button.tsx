@@ -20,7 +20,7 @@ export const mkHandleMouseLeave = (setHovered : (isHovered : boolean)=>void) => 
 //global declaration of button states
 export type ButtonState = "default" | "loading" | "error" | "success" | "warning" | "helping" | "hinting";
 
-//general css for button, can be altered or spoofed up
+//general css for each button variant
 export const DO_STYLE : React.CSSProperties = {
     backgroundColor: '#33b863',
     opacity: '1',
@@ -132,7 +132,7 @@ export const LOADING_STYLE : React.CSSProperties = {
     display: 'inline-block',
 };
 
-type VariantMap = "do"|"getInfo"|"getUserInfo"|"navigate"|"find"|"sort"|"install"|"comment"|"getHelp";
+export type VariantMap = "do"|"getInfo"|"getUserInfo"|"navigate"|"find"|"sort"|"install"|"comment"|"getHelp";
 //map to connect variants with their respective CSS styles
 export const variantMap = {
     "do": DO_STYLE, 
@@ -162,6 +162,108 @@ export const draw = {
     }
 };
 
+//in default state, display empty p block by text
+export const def = <p
+                        style = {{display: 'inline-block', margin: '0px'}}
+                    >
+                    </p>;
+//spinner for loading
+export const loading = <motion.button
+                        style={{
+                            ...LOADING_STYLE,
+                        }}
+                        animate={{ rotate: 360 }}
+                        transition={{ 
+                            duration: 2,
+                            repeat: Infinity
+                        }}
+                        />;
+//draw check mark for success
+export const success = <motion.svg
+                            width="10"
+                            height="10"
+                            viewBox="0 0 10 10"
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            <motion.line
+                                x1="0"
+                                y1="6"
+                                x2="4"
+                                y2="10"
+                                stroke="#000000"
+                                variants={draw}
+                            />
+                            <motion.line
+                                x1="4"
+                                y1="10"
+                                x2="10"
+                                y2="0"
+                                stroke="#000000"
+                                variants={draw}
+                            />
+                        </motion.svg>;
+//draw X for error
+export const error = <motion.svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 10 10"
+                        initial="hidden"
+                        animate="visible"
+                    >
+                        <motion.line
+                            x1="0"
+                            y1="0"
+                            x2="10"
+                            y2="10"
+                            stroke="#e3242b"
+                            variants={draw}
+                        />
+                        <motion.line
+                            x1="10"
+                            y1="0"
+                            x2="0"
+                            y2="10"
+                            stroke="#e3242b"
+                            variants={draw}
+                        />
+                    </motion.svg>;
+//warning symbol for warning
+export const warning = <AiOutlineWarning />;
+//waiving hand for helping
+export const helping = <motion.p
+                        style = {{ display: 'inline-block', margin: '0px' }}
+                        animate={{ rotate: [45, -45, 45]}}
+                        transition={{ 
+                            duration: 2,
+                            repeat: Infinity
+                        }}
+                    >
+                    <MdBackHand />
+                    </motion.p>;
+//pulsing brain for hinting
+export const hinting = <motion.p
+                        style = {{ display: 'inline-block', margin: '0px' }}
+                        animate={{ scale: [1.2, 0.8, 1.2]}}
+                        transition={{ 
+                            duration: 2,
+                            repeat: Infinity
+                        }}
+                    >
+                    <GiBrain />
+                    </motion.p>;
+
+//dictionary to for button state and associated symbol to be displayed next to text in button
+export const buttonStateMap = {
+        "default": def,
+        "loading": loading,
+        "error": error,
+        "success": success,
+        "warning": warning,
+        "helping": helping,
+        "hinting": hinting,
+};
+
 //delay funtion to set up the timing of drawing lines and shapes
 export const delay = (ms: number | undefined) => new Promise(
     resolve => setTimeout(resolve, ms)
@@ -182,15 +284,9 @@ export const Button : FC<ButtonProps>  = ({
     variant = "do",
     text,
 }) =>{
-    //get the correct block of css depending on the user variant input
-    //const css = variantMap[variant];
-
+    //set initial button state to default
     const [buttonState, setButtonState] = useState<ButtonState>("default");
-/*     const [myTimeout, setMyTimeout] = useReducer<(state: NodeJS.Timeout|undefined, newState : NodeJS.Timeout|undefined)=>NodeJS.Timeout|undefined)>((oldTimeout: NodeJS.Timeout, timeout : NodeJS.Timeout)=>{
-        clearTimeout(oldTimeout);
-        return timeout;
-  }, undefined); */
-
+    //set the initial hovered state to false
     const [isHovered, setHovered] = useState(false);
 
    // use your factory
@@ -198,14 +294,9 @@ export const Button : FC<ButtonProps>  = ({
    const handleMouseLeave = mkHandleMouseLeave(setHovered);
 
    const handleClickAsync = async ()=>{
-       //delay function I made just for testing purposes so I can slow down the transitions between states for visual testing
-    /* const delay = (ms: number | undefined) => new Promise(
-        resolve => setTimeout(resolve, ms)
-      ); */
 
-    // set buttonState to loading, log it in the console, and delay in this state to view spinner
+    // set buttonState to loading
     setButtonState("loading");
-    //console.log("loading");
 
     // dispatch the onclick
     const [err] = await to(onClick());
@@ -229,204 +320,7 @@ export const Button : FC<ButtonProps>  = ({
     }, 1000);
 
 }
-
-    //return loading spinner when in loading state
-    if(buttonState === 'loading'){
-        return (
-            <button
-            title = 'default'
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            className={BUTTON_CLASSNAMES}
-            onClick={handleClickAsync}
-            style={{
-                ...variantMap[variant],
-                ...style,
-                ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
-                }}>
-                {text + " "}
-                <motion.button
-                className={BUTTON_CLASSNAMES}
-                style={{
-                    ...LOADING_STYLE,
-                    ...style,
-                }}
-                animate={{ rotate: 360 }}
-                transition={{ 
-                    duration: 2,
-                    repeat: Infinity
-                }}
-                />
-            </button>
-        )
-    }
-    //return green check when loading completes successfully
-    if(buttonState === 'success'){
-        return (
-            <button
-            title = 'default'
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            className={BUTTON_CLASSNAMES}
-            onClick={handleClickAsync}
-            style={{
-                ...variantMap[variant],
-                ...style,
-                ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
-                }}>
-                {text + " "}
-                <motion.svg
-                    width="10"
-                    height="10"
-                    viewBox="0 0 10 10"
-                    initial="hidden"
-                    animate="visible"
-                >
-                    <motion.line
-                        x1="0"
-                        y1="6"
-                        x2="4"
-                        y2="10"
-                        stroke="#000000"
-                        variants={draw}
-                    />
-                    <motion.line
-                        x1="4"
-                        y1="10"
-                        x2="10"
-                        y2="0"
-                        stroke="#000000"
-                        variants={draw}
-                    />
-                </motion.svg>
-            </button>
-        )
-    }
-
-    //return button with red X for error
-    if(buttonState === "error"){
-        return (
-            <button
-                title = 'default'
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                className={BUTTON_CLASSNAMES}
-                onClick={handleClickAsync}
-                style={{
-                    ...variantMap[variant],
-                    ...style,
-                    ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
-                    }}>
-                    {text + " "}
-                    <motion.svg
-                        width="10"
-                        height="10"
-                        viewBox="0 0 10 10"
-                        initial="hidden"
-                        animate="visible"
-                    >
-                        <motion.line
-                            x1="0"
-                            y1="0"
-                            x2="10"
-                            y2="10"
-                            stroke="#e3242b"
-                            variants={draw}
-                        />
-                        <motion.line
-                            x1="10"
-                            y1="0"
-                            x2="0"
-                            y2="10"
-                            stroke="#e3242b"
-                            variants={draw}
-                        />
-                    </motion.svg>
-                </button>
-        )
-    }
-
-    //return button with attached warning symbol for warning
-    if(buttonState === 'warning'){
-        return (
-            <button
-            title = 'default'
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            className={BUTTON_CLASSNAMES}
-            onClick={handleClickAsync}
-            style={{
-                ...variantMap[variant],
-                ...style,
-                ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
-                }}>
-                {text + " "}
-                <AiOutlineWarning />
-            </button>
-        )
-    }
-
-    //return button with waving hand for helping
-    if(buttonState === 'helping'){
-        return (
-            <button
-            title = 'default'
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            className={BUTTON_CLASSNAMES}
-            onClick={handleClickAsync}
-            style={{
-                ...variantMap[variant],
-                ...style,
-                ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
-                }}>
-                {text + " "}
-                <motion.p
-                    className={BUTTON_CLASSNAMES}
-                    style = {{ display: 'inline-block', margin: '0px' }}
-                    animate={{ rotate: [45, -45, 45]}}
-                    transition={{ 
-                        duration: 2,
-                        repeat: Infinity
-                    }}
-                >
-                <MdBackHand />
-                </motion.p>
-            </button>
-        )
-    }
-
-    //button with pulsing brain for helping
-    if(buttonState === 'hinting'){
-        return (
-            <button
-            title = 'default'
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            className={BUTTON_CLASSNAMES}
-            onClick={handleClickAsync}
-            style={{
-                ...variantMap[variant],
-                ...style,
-                ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
-                }}>
-                {text + " "}
-                <motion.p
-                    className={BUTTON_CLASSNAMES}
-                    style = {{ display: 'inline-block', margin: '0px' }}
-                    animate={{ scale: [1.2, 0.8, 1.2]}}
-                    transition={{ 
-                        duration: 2,
-                        repeat: Infinity
-                    }}
-                >
-                <GiBrain />
-                </motion.p>
-            </button>
-        )
-    }
-
-    //unless otherwise tagged, return the default button
+    //return the proper button
     return (
         <button
         title = 'default'
@@ -439,7 +333,8 @@ export const Button : FC<ButtonProps>  = ({
             ...style,
             ...!isHovered ? variantMap[variant] : {opacity: '0.8'}
             }}>
-            {text}
+            {text + " "}
+            {buttonStateMap[buttonState]}
         </button>
     )
     
